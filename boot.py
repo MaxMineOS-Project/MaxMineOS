@@ -16,14 +16,17 @@ def check_kernel_updates(kernel_version:int):
     server_kernel_version = float(r.content)
     if kernel_version < server_kernel_version:
         print("Updating kernel...")
+        log.info("Updating kernel...")
         kernel_path = abspath + "System\\kernel.py"
         with open(kernel_path, "wb") as file:
             r = requests.get(repos[1] + "kernel.py")
             file.write(r.content)
             file.close()
         print(f"Kernel updated to version {server_kernel_version}")
+        log.info(f"Kernel updated to version {server_kernel_version}")
     else:
         print("Kernel is up-to-date")
+        log.info("Kernel is up-to-date!")
 
 def check_strong_depencies():
     try:
@@ -44,6 +47,7 @@ def check_internet_connection():
     if r.status_code != 200:
         print("Info: Unable to connect to max-mine server! Please, check the internet connection!")
         print("PKG tool won't work!")
+        log.warning("Cannot connect to the internet!")
         internet_connection = False
     else:
         internet_connection = True
@@ -98,12 +102,23 @@ if __name__ == "__main__":
     two_list_to_cort()
     load_ver()
     sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "System"))
+    sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "System", "Libraries"))
+    logger = importlib.import_module("logger")
+    log_file = os.path.join(abspath, "System", "logs", "system.log")
+    logger.setup_logger(log_file)
+    log = logger.get_logger("MaxMineOS")
+    log.info("Booting System...")
     kernel = importlib.import_module("kernel")
     check_kernel_updates(kernel.KERNEL_VERSION_SHORT)
     try:
         exitcode:int = kernel.main(internet_connection, repos, abspath, users, VER, hostname)
     except KeyboardInterrupt:
         print("Exiting...")
+        log.critical("User Hit ^C")
+        shutdown()
+    except EOFError:
+        print("Exiting...")
+        log.critical("User Hit ^Z")
         shutdown()
     if exitcode == 0:
         shutdown()

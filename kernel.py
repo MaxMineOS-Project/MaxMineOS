@@ -3,15 +3,15 @@
 
 # Main OS executable file - OS Kernel
 
-from Libraries import authlib, lexer, parser
+from Libraries import authlib, lexer, parser, logger
 import getpass
 import pendulum
 import asyncio
+import os
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.0.2-mm3-31.05.25"
-KERNEL_VERSION_SHORT = 1.02
-
+KERNEL_VERSION = "maxmine-1.1-mm4-31.05.25"
+KERNEL_VERSION_SHORT = 1.1
 async def start_timer():
     global start_time
     start_time = pendulum.now()
@@ -29,38 +29,52 @@ def auth(users:dict):
     global current_user
     while True:
         user = input("Введите имя пользователя: ")
+        log.info(f"User entered name {user}")
         upass = getpass.getpass(("Введите пароль пользователя: "))
         if user in users:
             if authlib.auth(users, user, upass):
                 print(f"Вы успешно вошли в систему под именем {user}")
                 current_user = user
+                log.info(f"User authorized with name {current_user}")
                 break
             else:
                 print("Неправильные имя пользователя и\\или пароль. Повторите попытку")
+                log.error("User entered wrong password")
                 continue
         else:
             print("Неправильные имя пользователя и\\или пароль. Повторите попытку")
+            log.error("User entered wrong username")
             continue
 
 def main(internet_connection:bool, repos:list[str], abspath:str, users:dict, ver:str, hostname:str):
-    global current_user
+    global log, current_user
+    log_file = os.path.join(abspath, "System", "logs", "system.log")
+    logger.setup_logger(log_file)
+    log = logger.get_logger("MaxMineOS")
+    log.info("System booted!")
     #region AUTH
     auth(users)
     #endregion
     #region WORKCYCLE
     while True:
         prompt = input(f"{current_user}:#")
+        log.info(f"User performed command {prompt}")
         if prompt == "":
             continue
         lexered_prompt = lexer.lexer(prompt)
         if lexered_prompt == 1:
+            log.error("Error while lexing command!")
             continue
-        exit_code = parser.parse(lexered_prompt, current_user, abspath, repos, internet_connection)
+        exit_code = parser.parse(lexered_prompt, current_user, abspath, repos, internet_connection, log)
+        log.info(f"Exit code: {exit_code}")
         if exit_code == "exit":
+            log.info("EXIT")
             return 0
         elif exit_code == "reboot":
+            log.info("REBOOT")
             return 1
         elif exit_code == "logout":
+            log.info("LOGOUT")
             current_user = ""
             auth(users)
         elif exit_code == "hostnamectl":
@@ -77,6 +91,7 @@ def main(internet_connection:bool, repos:list[str], abspath:str, users:dict, ver
         elif exit_code == "uptime":
             print(get_elapsed())
         elif exit_code == "invalid":
+            log.error("User entered unknown command!")
             print("Неизвестная команда! Проверьте правильность набора!")
             continue
 
