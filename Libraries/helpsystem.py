@@ -15,7 +15,8 @@ def main(argv:list[str]):
         print("whoami")
         print("ver")
         print("uptime")
-        print('help')
+        print("help")
+	print("sysupdate")
         print("Установленные пакеты запускаются по их имени")
         print("Справку по определенной команде можно увидеть командой: help <команда>")
         return 0
@@ -45,6 +46,10 @@ def main(argv:list[str]):
         elif argv[1] == "ver":
             print("ver - показывает версию системы")
             return 0
+	elif argv[1] == "sysupdate":
+            print("sysupdate - обновление системы")
+	    print("Используйте с осторожностью")
+	    return 0
         elif argv[1] == "uptime":
             print("uptime - показывает время работы системы с последнего перезапуска")
             return 0
