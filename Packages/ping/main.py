@@ -50,7 +50,7 @@ def main(argv: list[str], abspath: str):
         elif command == "address":
             while True:
                 r = ping(target, timeout=4)
-                if r is None:
+                if r is None or r == 0.0:
                     print("Превышен интервал ожидания")
                 else:
                     print(f"Ответ от {target} спустя {format_time(r)}")
