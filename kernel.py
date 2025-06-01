@@ -9,8 +9,8 @@ import pendulum
 import asyncio
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.0.1-mm1-31.05.25"
-KERNEL_VERSION_SHORT = 1.01
+KERNEL_VERSION = "maxmine-1.0.2-mm3-31.05.25"
+KERNEL_VERSION_SHORT = 1.02
 
 async def start_timer():
     global start_time
