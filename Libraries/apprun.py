@@ -23,9 +23,12 @@ def main(appname: str, args: list[str], current_user: str, abspath: str) -> int:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     try:
-        ret = module.main(args, abspath) # New package type
+        ret = module.main(args, abspath, current_user) # New package type
     except TypeError:
-        ret = module.main(args) # Old package type
+        try:
+            ret = module.main(args, abspath) # Older package type
+        except TypeError:
+            ret = module.main(args) # Very old package type
     del module
     shutil.rmtree(temp_path)
     os.mkdir(temp_path)
