@@ -40,16 +40,60 @@ def install():
     hostname = input("Введите имя ПК. Его нельзя будет изменить в будущем: ")
     users = []
     passwords = []
-
+    rejected_symbols = (
+        "~",
+        "`",
+        "!",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "0",
+        "@",
+        "\"",
+        "\\",
+        "-",
+        "_",
+        "=",
+        "+",
+        ";",
+        "%",
+        "^",
+        ":",
+        "&",
+        "?",
+        ",",
+        ".",
+        "/",
+        ">",
+        "<",
+        "\t",
+        "'",
+        "[",
+        "]",
+        "{",
+        "}",
+        "(",
+        ")",
+        "*"
+    )
     while True:
         user = input("Введите имя пользователя. Чтобы закончить, введите $end: ")
-        if user == "$end" and not users:
+        if any(char in rejected_symbols for char in user):
+            print("Не используйте запрещенные символы в имени!")
+            continue
+        if user.startswith("$") and not users:
             print("Создайте хотя бы одного пользователя!")
             continue
         if user == "":
             print("Имя пользователя не может быть пустым")
             continue
-        if user == "$end":
+        if user == "$end" or user.startswith("$"):
             break
         if user in users:
             print("Такой пользователь уже существует!")
@@ -94,6 +138,7 @@ def install():
     os.remove(os.path.join(install_dir, "setup.py"))
     os.remove(os.path.join(install_dir, "README.txt"))
     os.remove(os.path.join(install_dir, "install.ps1"))
+    os.remove(os.path.join(install_dir, "install.bat"))
     sys.exit(0)
 
 
