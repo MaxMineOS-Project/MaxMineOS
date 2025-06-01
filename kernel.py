@@ -10,7 +10,7 @@ import asyncio
 import os
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.1-mm4-31.05.25"
+KERNEL_VERSION = "maxmine-1.1-mm5-01.06.25"
 KERNEL_VERSION_SHORT = 1.1
 async def start_timer():
     global start_time
