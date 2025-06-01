@@ -1,3 +1,3 @@
-rm ./MaxMineOS.zip
+del ./MaxMineOS.zip
 python ./setup.py
 pause
