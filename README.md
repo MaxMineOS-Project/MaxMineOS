@@ -11,3 +11,9 @@ When your system is installed, just run `run.ps1` or `run.bat` to start the syst
 You can install and run any package by running command `pkg install <package>`
 
 When the package installed, run command `<package> <args>`
+
+# Important
+System is downloading from server.
+This means you cannot access previos versions of system. 
+
+e.g. If latest release is 4, you cannot download release 3
