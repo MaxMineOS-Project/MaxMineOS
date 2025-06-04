@@ -19,11 +19,17 @@ def install():
 
     print("Запуск установки...")
     print("GET https://max-mine.ru/files/MaxMineOS.zip...")
-    r = requests.get("https://max-mine.ru/files/MaxMineOS.zip")
+    try:
+        r = requests.get("https://max-mine.ru/files/MaxMineOS.zip")
+    except Exception:
+        print("Не удалось скачать архив с системой. Попробуйте перезапустить установщик")
+        os.system("pause")
+        sys.exit(1)
     if r.status_code == 200:
         print(f"OK 200 https://max-mine.ru/files/MaxMineOS.zip {round(r.elapsed.total_seconds() * 1000, 3)} мс")
     else:
         print(f"ERROR {r.status_code} https://max-mine.ru/files/MaxMineOS.zip")
+        os.system("pause")
         sys.exit(-1)
 
     install_dir = os.path.dirname(os.path.abspath(__file__))
