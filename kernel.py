@@ -10,8 +10,8 @@ import asyncio
 import os
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.1-mm5-01.06.25"
-KERNEL_VERSION_SHORT = 1.1
+KERNEL_VERSION = "maxmine-1.1.1-mm6-04.06.25"
+KERNEL_VERSION_SHORT = 1.11
 async def start_timer():
     global start_time
     start_time = pendulum.now()
@@ -90,6 +90,10 @@ def main(internet_connection:bool, repos:list[str], abspath:str, users:dict, ver
             print("Версия системы: " + ver)
         elif exit_code == "uptime":
             print(get_elapsed())
+        elif exit_code == "syslog":
+            with open(log_file, "r", encoding="utf-8") as file:
+                print(file.read())
+                file.close()
         elif exit_code == "invalid":
             log.error("User entered unknown command!")
             print("Неизвестная команда! Проверьте правильность набора!")
