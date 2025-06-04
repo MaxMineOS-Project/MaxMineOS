@@ -28,6 +28,8 @@ def parse(command:list[str], current_user:str, abspath:str, repos:list[str], int
         from . import pkg
         pkg.main(command, repos, current_user, abspath, internet_connection)
         return 0
+    elif command[0] == "syslog":
+        return "syslog"
     elif command[0] == "help":
         from . import helpsystem
         helpsystem.main(command)

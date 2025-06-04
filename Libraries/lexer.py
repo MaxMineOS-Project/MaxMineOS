@@ -9,6 +9,6 @@ def lexer(rawstring:str):
     try:
         command = shlex.split(rawstring)
     except ValueError:
-        print("Ошибка разбора команды! Попробуйте еще раз!")
+        print("Ошибка обработки команды! Попробуйте еще раз!")
         return 1
     return command

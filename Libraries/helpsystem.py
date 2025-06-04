@@ -15,10 +15,10 @@ def main(argv:list[str]):
         print("whoami")
         print("ver")
         print("uptime")
-        print("help")
-	print("sysupdate")
+        print('help')
         print("Установленные пакеты запускаются по их имени")
         print("Справку по определенной команде можно увидеть командой: help <команда>")
+        print("Для получения помощи по определенному пакету установите пакет pkghelp и запустите: pkghelp <пакет>")
         return 0
     else:
         if argv[1] == "exit":
@@ -46,10 +46,6 @@ def main(argv:list[str]):
         elif argv[1] == "ver":
             print("ver - показывает версию системы")
             return 0
-	elif argv[1] == "sysupdate":
-            print("sysupdate - обновление системы")
-	    print("Используйте с осторожностью")
-	    return 0
         elif argv[1] == "uptime":
             print("uptime - показывает время работы системы с последнего перезапуска")
             return 0
@@ -57,6 +53,10 @@ def main(argv:list[str]):
             print("help - справочная система")
             print("help - выводит общую справку")
             print("help <команда> - выводит справку по отдельной команде")
+            return 0
+        elif argv[1] == "pkghelp":
+            print("pkghelp - справочная система по пакетам.")
+            print("Синтаксис: pkghelp <пакет>")
             return 0
         else:
             print(f"Команда {argv[1]} не найдена в справочной системе")
