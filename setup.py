@@ -9,6 +9,8 @@ import os
 import zipfile
 import getpass
 import sys
+import random
+import string
 
 def install():
     print("=== Добро пожаловать в установщик MaxMineOS ===")
@@ -43,7 +45,9 @@ def install():
     with zipfile.ZipFile(zip_path, 'r') as archive:
         archive.extractall(install_dir)
     os.remove(os.path.join(install_dir, "MaxMineOS.zip"))
-    hostname = input("Введите имя ПК. Его нельзя будет изменить в будущем: ")
+    hostname = input("Введите имя ПК. Его нельзя будет изменить в будущем. Оставьте пустым для случайного значения: ")
+    if hostname == "":
+        hostname = "PC-" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
     users = []
     passwords = []
     rejected_symbols = (
@@ -111,6 +115,8 @@ def install():
             if upass == "":
                 print("Пароль не может быть пустым! Это небезопасно!")
                 continue
+            if user.__len__().__le__(8):
+                print("Пароль не может быть короче 8 символов!")
             upass = upass.replace(" ", "")
             hashed = bcrypt.hashpw(upass.encode(), bcrypt.gensalt()).decode()
             passwords.append(hashed)
