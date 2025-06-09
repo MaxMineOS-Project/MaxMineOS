@@ -11,8 +11,8 @@ import os
 import requests
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.2-mm6-09.06.25"
-KERNEL_VERSION_SHORT = 1.2
+KERNEL_VERSION = "maxmine-1.2.1-mm6-09.06.25"
+KERNEL_VERSION_SHORT = 1.21
 TARGET_SYSTEM_VERSION = 6
 async def start_timer():
     global start_time
@@ -48,8 +48,9 @@ def auth(users:dict):
             log.error("User entered wrong username")
             continue
 
-def main(internet_connection:bool, repos:list[str], abspath:str, users:dict, ver:str, hostname:str):
-    global log, current_user
+def main(ic:bool, repos:list[str], abspath:str, users:dict, ver:str, hostname:str):
+    global log, current_user, internet_connection
+    internet_connection = ic
     log_file = os.path.join(abspath, "System", "logs", "system.log")
     logger.setup_logger(log_file)
     log = logger.get_logger("MaxMineOS")
