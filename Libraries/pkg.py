@@ -53,9 +53,37 @@ def main(argv:list[str], repos:list[str], current_user:str, abspath:str, interne
             else:
                 continue
     elif argv[1] == "update":
-        print("Обновление ядра системы невозможно во время его работы!")
-        print("Обновления ядра автоматически проверяются во время запуска системы!")
-        return 1
+        print(f"Обновление пакета {argv[2]}...")
+        if not internet_connection:
+            print("Интернет не подключен! Обновление недоступно!")
+            return 1
+        package_file = os.path.join(abspath, "Users", current_user, "Packages", argv[2] + ".mos")
+        print(f"GET https://max-mine.ru/pkg/{argv[2]}.mos")
+        r = requests.get(f"{repos[0]}{argv[2]}.mos")
+        if r.status_code == 200:
+            print(f"OK https://max-mine.ru/pkg/{argv[2]}.mos {round(r.elapsed.total_seconds() * 1000, 3)} мс")
+            with open(package_file, "wb") as file:
+                file.write(r.content)
+                file.close()
+            print("Пакет успешно обновлен!")
+            return 0
+        else:
+            print(f"ERROR {r.status_code} https://max-mine.ru/pkg/{argv[2]}.mos {round(r.elapsed.total_seconds() * 1000, 3)} мс")
+            if r.status_code != 404:
+                print("Сервер недоступен")
+            else:
+                print("Пакет не существует!")
+            return 1
+    elif argv[1] == "list":
+        print("Получение списка пакетов...")
+        packages = [f for f in os.listdir(os.path.join(abspath, "Users", current_user, "Packages")) if f.endswith(".mos")]
+        if len(packages) == 0:
+            print("У вас не установлено ни одного пакета!")
+            return 0
+        print("Список пакетов: ")
+        for name in packages:
+            print(name + "\n")
+        return 0
     else:
         print("Команда не найдена! Повторите попытку!")
         return 1

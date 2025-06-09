@@ -36,6 +36,9 @@ def main(argv:list[str]):
             print("Синтаксис: pkg install <пакет>")
             print("pkg delete - удаление пакетов")
             print("Синтаксис: pkg delete <пакет>")
+            print("pkg list - список пакетов")
+            print("pkg update - обновление пакетов")
+            print("Синтаксис: pkg update <пакет>")
             return 0
         elif argv[1] == "hostnamectl":
             print("hostnamectl - выводит комплексную информацию о системе")

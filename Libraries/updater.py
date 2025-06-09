@@ -18,6 +18,7 @@ def update_system(repos: list[str], abspath: str, log):
         if r.status_code != 200:
             print(f"ERROR {r.status_code} {repos[1] + "MaxMineOS.zip"} {r.elapsed.total_seconds() * 1000} мс")
             log.error(f"Error while downloading update: {r.status_code}")
+            print("Ошибка во время скачивания обновления!")
             return 1
         print(f"OK {repos[1] + "MaxMineOS.zip"} {r.elapsed.total_seconds() * 1000} мс")
         update_zip = os.path.join(abspath, "System", "temp", "update.zip")
@@ -41,8 +42,10 @@ def update_system(repos: list[str], abspath: str, log):
                     os.makedirs(dst_dir, exist_ok=True)
                     for file in files:
                         shutil.copy2(os.path.join(root, file), os.path.join(dst_dir, file))
-        log.info("Update succesfully conplete.")
+        log.info("Update succesfully complete.")
+        print("Обновление успешно!")
         return 0
     except Exception as e:
-        log.error("Error while updating!")
+        log.error(f"Error while updating! Error: {e}")
+        print("Ошибка в овремя обновления!")
         return 1

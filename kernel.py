@@ -11,9 +11,9 @@ import os
 import requests
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.2.1-mm6-09.06.25"
-KERNEL_VERSION_SHORT = 1.21
-TARGET_SYSTEM_VERSION = 6
+KERNEL_VERSION = "maxmine-1.2.2-mm7-09.06.25"
+KERNEL_VERSION_SHORT = 1.22
+TARGET_SYSTEM_VERSION = 7
 async def start_timer():
     global start_time
     start_time = pendulum.now()

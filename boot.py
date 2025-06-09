@@ -9,7 +9,7 @@ import importlib
 import os
 import sys
 
-def check_kernel_updates(kernel_version:int, target_version:int):
+def check_kernel_updates(kernel_version:int):
     if not internet_connection:
         print("Can't check kernel updates!")
         log.error("Can't check kernel updates, no internet connection")
@@ -18,17 +18,23 @@ def check_kernel_updates(kernel_version:int, target_version:int):
     import requests
     r = requests.get(repos[0] + "MANIFEST.MF")
     server_kernel_version = float(r.content)
+    kernel_path = abspath + "System\\kernel.py"
+    with open(kernel_path, "rb+") as file:
+        r = requests.get(repos[1] + "kernel.py")
+        previos_kernel = file.read()
+        target_version = importlib.import_module("kernel").TARGET_SYSTEM_VERSION
+        file.write(r.content)
+        file.close()
     if kernel_version < server_kernel_version:
         if target_version != VER:
             print("Kernel not updated! Reason: incompatible system.")
             log.error(f"Kernel not updated! Reason: incompatible version system. System version: {VER}, but required: {target_version}")
+            with open(kernel_path, "wb") as file:
+                file.write(previos_kernel)
+                file.close()
+            return
         print("Updating kernel...")
         log.info("Updating kernel...")
-        kernel_path = abspath + "System\\kernel.py"
-        with open(kernel_path, "wb") as file:
-            r = requests.get(repos[1] + "kernel.py")
-            file.write(r.content)
-            file.close()
         print(f"Kernel updated to version {server_kernel_version}")
         log.info(f"Kernel updated to version {server_kernel_version}")
     else:
@@ -51,23 +57,12 @@ def check_internet_connection():
     global internet_connection, log
     import requests
     try:
-        r = requests.get("https://max-mine.ru/")
-    except requests.exceptions.ConnectionError:
+        r = requests.head("https://max-mine.ru/")
+    except Exception:
         print("Info: Unable to connect to max-mine server! Please, check the internet connection!")
         print("PKG tool won't work!")
         log.warning("Cannot connect to the internet!")
         internet_connection = False
-        return
-    except requests.exceptions.ConnectTimeout:
-        print("Info: Unable to connect to max-mine server! Please, check the internet connection!")
-        print("PKG tool won't work!")
-        log.warning("Cannot connect to the internet!")
-        internet_connection = False
-        return
-    except Exception as exception:
-        print("An unknown error occured!")
-        log.critical(f"Unknown error: {exception}")
-        shutdown()
     if r.status_code != 200:
         print("Info: Unable to connect to max-mine server! Please, check the internet connection!")
         print("PKG tool won't work!")
@@ -117,7 +112,7 @@ def reboot():
         exit(-2)
     exit(0)
 
-def shutdown() -> None:
+def shutdown():
     exit(0)
 
 if __name__ == "__main__":
@@ -138,7 +133,7 @@ if __name__ == "__main__":
     two_list_to_cort()
     load_ver()
     kernel = importlib.import_module("kernel")
-    check_kernel_updates(kernel.KERNEL_VERSION_SHORT, kernel.TARGET_SYSTEM_VERSION)
+    check_kernel_updates(kernel.KERNEL_VERSION_SHORT)
     try:
         exitcode:int = kernel.main(internet_connection, repos, abspath, users, VER, hostname)
     except KeyboardInterrupt:
