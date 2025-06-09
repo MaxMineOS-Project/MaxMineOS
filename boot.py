@@ -9,12 +9,19 @@ import importlib
 import os
 import sys
 
-def check_kernel_updates(kernel_version:int):
+def check_kernel_updates(kernel_version:int, target_version:int):
+    if not internet_connection:
+        print("Can't check kernel updates!")
+        log.error("Can't check kernel updates, no internet connection")
+        return
     global repos
     import requests
     r = requests.get(repos[0] + "MANIFEST.MF")
     server_kernel_version = float(r.content)
     if kernel_version < server_kernel_version:
+        if target_version != VER:
+            print("Kernel not updated! Reason: incompatible system.")
+            log.error(f"Kernel not updated! Reason: incompatible version system. System version: {VER}, but required: {target_version}")
         print("Updating kernel...")
         log.info("Updating kernel...")
         kernel_path = abspath + "System\\kernel.py"
@@ -30,9 +37,9 @@ def check_kernel_updates(kernel_version:int):
 
 def check_strong_depencies():
     try:
-        import requests, bcrypt, pendulum, dateutil, tzdata
+        import requests, bcrypt, pendulum, dateutil, tzdata, ping3
     except ImportError:
-        subprocess.run("pip install requests bcrypt pendulum python-dateutil tzdata", shell=True)
+        subprocess.run("pip install requests bcrypt pendulum python-dateutil tzdata ping3", shell=True)
 
 def load_hostname():
     global hostname
@@ -41,9 +48,26 @@ def load_hostname():
         file.close()
 
 def check_internet_connection():
-    global internet_connection
+    global internet_connection, log
     import requests
-    r = requests.get("https://max-mine.ru/")
+    try:
+        r = requests.get("https://max-mine.ru/")
+    except requests.exceptions.ConnectionError:
+        print("Info: Unable to connect to max-mine server! Please, check the internet connection!")
+        print("PKG tool won't work!")
+        log.warning("Cannot connect to the internet!")
+        internet_connection = False
+        return
+    except requests.exceptions.ConnectTimeout:
+        print("Info: Unable to connect to max-mine server! Please, check the internet connection!")
+        print("PKG tool won't work!")
+        log.warning("Cannot connect to the internet!")
+        internet_connection = False
+        return
+    except Exception as exception:
+        print("An unknown error occured!")
+        log.critical(f"Unknown error: {exception}")
+        shutdown()
     if r.status_code != 200:
         print("Info: Unable to connect to max-mine server! Please, check the internet connection!")
         print("PKG tool won't work!")
@@ -85,7 +109,12 @@ def load_ver():
         VER = file.readline()
 
 def reboot():
-    subprocess.run("python " + abspath + r"boot\boot.py")
+    try:
+        subprocess.run("python " + abspath + r"boot\boot.py")
+    except KeyboardInterrupt:
+        exit(-1)
+    except EOFError:
+        exit(-2)
     exit(0)
 
 def shutdown() -> None:
@@ -93,6 +122,13 @@ def shutdown() -> None:
 
 if __name__ == "__main__":
     load_abspath()
+    sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "System"))
+    sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "System", "Libraries"))
+    logger = importlib.import_module("logger")
+    log_file = os.path.join(abspath, "System", "logs", "system.log")
+    logger.setup_logger(log_file)
+    log = logger.get_logger("MaxMineOS")
+    log.info("Booting System...")
     check_strong_depencies()
     check_internet_connection()
     load_hostname()
@@ -101,15 +137,8 @@ if __name__ == "__main__":
     load_passwords()
     two_list_to_cort()
     load_ver()
-    sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "System"))
-    sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "System", "Libraries"))
-    logger = importlib.import_module("logger")
-    log_file = os.path.join(abspath, "System", "logs", "system.log")
-    logger.setup_logger(log_file)
-    log = logger.get_logger("MaxMineOS")
-    log.info("Booting System...")
     kernel = importlib.import_module("kernel")
-    check_kernel_updates(kernel.KERNEL_VERSION_SHORT)
+    check_kernel_updates(kernel.KERNEL_VERSION_SHORT, kernel.TARGET_SYSTEM_VERSION)
     try:
         exitcode:int = kernel.main(internet_connection, repos, abspath, users, VER, hostname)
     except KeyboardInterrupt:
