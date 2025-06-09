@@ -117,6 +117,7 @@ def install():
                 continue
             if user.__len__().__le__(8):
                 print("Пароль не может быть короче 8 символов!")
+                continue
             upass = upass.replace(" ", "")
             hashed = bcrypt.hashpw(upass.encode(), bcrypt.gensalt()).decode()
             passwords.append(hashed)
