@@ -8,10 +8,12 @@ import getpass
 import pendulum
 import asyncio
 import os
+import requests
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.1.1-mm6-04.06.25"
-KERNEL_VERSION_SHORT = 1.11
+KERNEL_VERSION = "maxmine-1.2-mm6-09.06.25"
+KERNEL_VERSION_SHORT = 1.2
+TARGET_SYSTEM_VERSION = 6
 async def start_timer():
     global start_time
     start_time = pendulum.now()
@@ -57,7 +59,7 @@ def main(internet_connection:bool, repos:list[str], abspath:str, users:dict, ver
     #endregion
     #region WORKCYCLE
     while True:
-        prompt = input(f"{current_user}:#")
+        prompt = input(f"{current_user}@{hostname}:#")
         log.info(f"User performed command {prompt}")
         if prompt == "":
             continue
@@ -78,6 +80,14 @@ def main(internet_connection:bool, repos:list[str], abspath:str, users:dict, ver
             current_user = ""
             auth(users)
         elif exit_code == "hostnamectl":
+            try:
+                r = requests.head("https://max-mine.ru/")
+                if r.status_code == 200:
+                    internet_connection = True
+                else:
+                    internet_connection = False
+            except Exception:
+                internet_connection = False
             print(f"Система: MaxMineOS {ver}")
             print(f"Версия ядра: {KERNEL_VERSION}")
             print(f"Краткая версия ядра: {KERNEL_VERSION_SHORT}")
