@@ -18,3 +18,12 @@
 5. Start the system again and check that everything works
 
 **Update complete!**
+
+
+# MaxMineOS 7
+* Fixed updating kernel
+* Adding updating messages to console
+* Adding `pkg list` command
+* Adding `pkg update` command
+* Added logging encoding - UTF-8
+* Hostnamectl internet checking
