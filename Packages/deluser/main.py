@@ -3,13 +3,15 @@ import os
 import getpass
 import bcrypt
 
-def main(argv: list[str], abspath: str):
+def main(argv: list[str], abspath: str, current_user:str):
     if len(argv) == 1:
         print("Передайте имя пользователя в аргументы!")
         return 1
 
     username = argv[1]
-
+    if username == current_user:
+        print("Вы не можете удалить текущего пользователя!")
+        return 1
     if not os.path.exists(os.path.join(abspath, "Users", username)):
         print(f"Пользователь {username} не найден!")
         return 1
