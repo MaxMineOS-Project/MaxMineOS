@@ -115,7 +115,7 @@ def install():
             if upass == "":
                 print("Пароль не может быть пустым! Это небезопасно!")
                 continue
-            if user.__len__().__le__(8):
+            if upass.__len__().__lt__(8):
                 print("Пароль не может быть короче 8 символов!")
                 continue
             upass = upass.replace(" ", "")
@@ -148,10 +148,8 @@ def install():
     os.makedirs(os.path.join(install_dir, "System", "temp"), mode=0o777, exist_ok=True)
 
     print("Система установлена успешно! Пользуйтесь!")
-    os.remove(os.path.join(install_dir, "setup.py"))
+    os.remove(os.path.join(install_dir, "setup.exe"))
     os.remove(os.path.join(install_dir, "README.txt"))
-    os.remove(os.path.join(install_dir, "install.ps1"))
-    os.remove(os.path.join(install_dir, "install.bat"))
     sys.exit(0)
 
 
