@@ -7,7 +7,7 @@ import requests
 import os
 
 def main(argv:list[str], repos:list[str], current_user:str, abspath:str, internet_connection:bool):
-    if len(argv) < 3:
+    if len(argv) < 3 and argv[1] != "list":
         print("Не все аргументы указаны!")
         return 1
     if argv[1] == "install":
