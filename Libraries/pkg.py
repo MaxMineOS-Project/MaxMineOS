@@ -82,7 +82,7 @@ def main(argv:list[str], repos:list[str], current_user:str, abspath:str, interne
             return 0
         print("Список пакетов: ")
         for name in packages:
-            print(name + "\n")
+            print(name.removesuffix(".mos") + "\n")
         return 0
     else:
         print("Команда не найдена! Повторите попытку!")
