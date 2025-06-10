@@ -26,7 +26,7 @@ def check_kernel_updates(kernel_version:int):
         file.write(r.content)
         file.close()
     if kernel_version < server_kernel_version:
-        if target_version != VER:
+        if int(target_version) != int(VER):
             print("Kernel not updated! Reason: incompatible system.")
             log.error(f"Kernel not updated! Reason: incompatible version system. System version: {VER}, but required: {target_version}")
             with open(kernel_path, "wb") as file:
