@@ -33,8 +33,16 @@ def install():
         print(f"ERROR {r.status_code} https://max-mine.ru/files/MaxMineOS.zip")
         os.system("pause")
         sys.exit(-1)
-
-    install_dir = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        install_dir = input("Введите абсолютный путь установки системы: ")
+        if not os.path.exists(install_dir):
+            os.makedirs(install_dir, exist_ok=True)
+            break
+        if not os.path.isdir(install_dir):
+            print("Путь не является директорией!")
+            continue
+        if not os.path.isabs(install_dir):
+            install_dir = os.path.abspath(install_dir)
     zip_path = os.path.join(install_dir, "MaxMineOS.zip")
 
     print("Сохранение архива...")
