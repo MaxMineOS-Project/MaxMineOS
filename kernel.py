@@ -11,8 +11,8 @@ import os
 import requests
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.2.2-mm7-09.06.25"
-KERNEL_VERSION_SHORT = 1.22
+KERNEL_VERSION = "maxmine-1.2.3-mm7-09.06.25"
+KERNEL_VERSION_SHORT = 1.23
 TARGET_SYSTEM_VERSION = 7
 async def start_timer():
     global start_time
@@ -93,6 +93,7 @@ def main(ic:bool, repos:list[str], abspath:str, users:dict, ver:str, hostname:st
             print(f"Версия ядра: {KERNEL_VERSION}")
             print(f"Краткая версия ядра: {KERNEL_VERSION_SHORT}")
             print(f"Имя системы: {hostname}")
+            print(f"Путь установки системы: {abspath}")
             print(f"Текущий пользователь: {current_user}")
             print(f"Подключение к интернету: {"Да" if internet_connection else "Нет"}")
         elif exit_code == "whoami":
