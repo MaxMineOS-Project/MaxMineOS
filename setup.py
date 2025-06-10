@@ -43,6 +43,9 @@ def install():
             continue
         if not os.path.isabs(install_dir):
             install_dir = os.path.abspath(install_dir)
+            break
+        else:
+            break
     zip_path = os.path.join(install_dir, "MaxMineOS.zip")
 
     print("Сохранение архива...")
@@ -53,7 +56,7 @@ def install():
     with zipfile.ZipFile(zip_path, 'r') as archive:
         archive.extractall(install_dir)
     os.remove(os.path.join(install_dir, "MaxMineOS.zip"))
-    hostname = input("Введите имя ПК. Его нельзя будет изменить в будущем. Оставьте пустым для случайного значения: ")
+    hostname = input("Введите имя ПК. Оставьте пустым для случайного значения: ")
     if hostname == "":
         hostname = "PC-" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
     users = []
