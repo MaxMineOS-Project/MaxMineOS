@@ -55,6 +55,10 @@ def main(argv:list[str]):
     if argv[1] == "currency":
         print("currency - просмотр текущего валютного курса к рублю")
         return 0
+    if argv[1] == "portscan":
+        print("portscan - сканирует ip-адрес или имя хоста и выводит список прослушиваемых портов")
+        print("Синтаксис: portscan <имяхостаилиip>")
+        return 0
     else:
         print(f"Пакета {argv[1]} не существует!")
         return 1
