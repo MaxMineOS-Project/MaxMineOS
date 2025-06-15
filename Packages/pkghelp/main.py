@@ -9,6 +9,7 @@ def main(argv:list[str]):
         "ping",
         "pkghelp",
         "chhostname",
+        "currency"
     )
     if len(argv) < 2:
         print("Помощь по пакетам")
@@ -50,6 +51,9 @@ def main(argv:list[str]):
     if argv[1] == "chhostname":
         print("chhostname - изменение имени ПК")
         print("Синтаксис: chhostname <имя>")
+        return 0
+    if argv[1] == "currency":
+        print("currency - просмотр текущего валютного курса к рублю")
         return 0
     else:
         print(f"Пакета {argv[1]} не существует!")
