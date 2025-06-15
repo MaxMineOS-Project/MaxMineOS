@@ -10,7 +10,7 @@ When your system is installed, just run `run.ps1` or `run.bat` to start the syst
 # Package Running HOWTO
 You can install and run any package by running command `pkg install <package>`
 
-When the package installed, run command `<package> <args>`
+When the package installed, run it: `<package> <args>`
 
 # Important
 System is downloading from server.
