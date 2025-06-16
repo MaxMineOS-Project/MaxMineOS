@@ -5,6 +5,7 @@
 
 import os
 from . import apprun
+import time
 
 def parse(command:list[str], current_user:str, abspath:str, repos:list[str], internet_connection:bool, log):
     if command[0] == "shutdown" or command[0] == "exit":
@@ -28,12 +29,19 @@ def parse(command:list[str], current_user:str, abspath:str, repos:list[str], int
         from . import pkg
         pkg.main(command, repos, current_user, abspath, internet_connection)
         return 0
+    elif command[0] == "hostname":
+        return "hostname"
     elif command[0] == "syslog":
         return "syslog"
     elif command[0] == "help":
         from . import helpsystem
         helpsystem.main(command)
         return 0
+    elif command[0] == "wait":
+        try:
+            time.sleep()
+        except (KeyboardInterrupt, EOFError):
+            return 0
     elif os.path.exists(os.path.join(abspath, "Users",  current_user, "Packages", command[0] + ".mos")):
         apprun.main(command[0], command, current_user, abspath)
         return 0

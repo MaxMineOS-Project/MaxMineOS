@@ -11,8 +11,8 @@ import os
 import requests
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.2.3-mm7-09.06.25"
-KERNEL_VERSION_SHORT = 1.23
+KERNEL_VERSION = "maxmine-1.2.4-mm7-16.06.25"
+KERNEL_VERSION_SHORT = 1.24
 TARGET_SYSTEM_VERSION = 7
 async def start_timer():
     global start_time
@@ -25,7 +25,6 @@ def get_elapsed():
 async def timer():
     await start_timer()
 asyncio.run(timer())
-
 current_user:str
 def auth(users:dict):
     global current_user
@@ -49,18 +48,16 @@ def auth(users:dict):
             continue
 
 def main(ic:bool, repos:list[str], abspath:str, users:dict, ver:str, hostname:str):
-    global log, current_user, internet_connection
+    global log, current_user, internet_connection, prompt, exit_code, pending_command, returncode
     internet_connection = ic
     log_file = os.path.join(abspath, "System", "logs", "system.log")
     logger.setup_logger(log_file)
     log = logger.get_logger("MaxMineOS")
-    log.info("System booted!")
-    #region AUTH
+    log.info("System booted.")
     auth(users)
-    #endregion
-    #region WORKCYCLE
+    print("Введите help для получения помощи")
     while True:
-        prompt = input(f"{current_user}@{hostname}:#")
+        prompt = input(f"{current_user}@{hostname}:# ")
         log.info(f"User performed command {prompt}")
         if prompt == "":
             continue
@@ -110,5 +107,3 @@ def main(ic:bool, repos:list[str], abspath:str, users:dict, ver:str, hostname:st
             log.error("User entered unknown command!")
             print("Неизвестная команда! Проверьте правильность набора!")
             continue
-
-    #endregion

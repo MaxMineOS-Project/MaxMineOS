@@ -8,6 +8,8 @@ import subprocess
 import importlib
 import os
 import sys
+import readline
+
 
 def check_kernel_updates(kernel_version:int):
     if not internet_connection:
@@ -20,10 +22,8 @@ def check_kernel_updates(kernel_version:int):
     server_kernel_version = float(r.content)
     kernel_path = abspath + "System\\kernel.py"
     with open(kernel_path, "rb+") as file:
-        r = requests.get(repos[1] + "kernel.py")
         previos_kernel = file.read()
         target_version = importlib.import_module("kernel").TARGET_SYSTEM_VERSION
-        file.write(r.content)
         file.close()
     if kernel_version < server_kernel_version:
         if int(target_version) != int(VER):
@@ -35,6 +35,10 @@ def check_kernel_updates(kernel_version:int):
             return
         print("Updating kernel...")
         log.info("Updating kernel...")
+        with open(kernel_path, "rb+") as file:
+            r = requests.get(repos[1] + "kernel.py")
+            file.write(r.content)
+            file.close()
         print(f"Kernel updated to version {server_kernel_version}")
         log.info(f"Kernel updated to version {server_kernel_version}")
     else:
