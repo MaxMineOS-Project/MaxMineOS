@@ -9,18 +9,18 @@ import shutil
 import requests
 import zipfile
 
-def update_system(repos: list[str], abspath: str, log):
+def update_system(abspath: str, log):
     try:
         log.info("Starting system update...")
-        url = repos[1] + "MaxMineOS.zip"
-        print(f"GET {repos[1] + "MaxMineOS.zip"}")
+        url = "https://max-mine.ru/files/" + "MaxMineOS.zip"
+        print(f"GET {url}")
         r = requests.get(url)
         if r.status_code != 200:
-            print(f"ERROR {r.status_code} {repos[1] + "MaxMineOS.zip"} {r.elapsed.total_seconds() * 1000} мс")
+            print(f"ERROR {r.status_code} {url} {r.elapsed.total_seconds() * 1000} мс")
             log.error(f"Error while downloading update: {r.status_code}")
             print("Ошибка во время скачивания обновления!")
             return 1
-        print(f"OK {repos[1] + "MaxMineOS.zip"} {r.elapsed.total_seconds() * 1000} мс")
+        print(f"OK {url} {r.elapsed.total_seconds() * 1000} мс")
         update_zip = os.path.join(abspath, "System", "temp", "update.zip")
         with open(update_zip, "wb") as f:
             f.write(r.content)

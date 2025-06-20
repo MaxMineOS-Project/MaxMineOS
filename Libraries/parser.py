@@ -7,7 +7,7 @@ import os
 from . import apprun
 import time
 
-def parse(command:list[str], current_user:str, abspath:str, repos:list[str], internet_connection:bool, log):
+def parse(command:list[str], current_user:str, abspath:str, internet_connection:bool, log):
     if command[0] == "shutdown" or command[0] == "exit":
         return "exit"
     elif command[0] == "reboot" or command[0] == "restart":
@@ -24,10 +24,10 @@ def parse(command:list[str], current_user:str, abspath:str, repos:list[str], int
         return "whoami"
     elif command[0] == "sysupdate":
         from . import updater
-        updater.update_system(repos, abspath, log)
+        updater.update_system(abspath, log)
     elif command[0] == "pkg":
         from . import pkg
-        pkg.main(command, repos, current_user, abspath, internet_connection)
+        pkg.main(command, current_user, abspath, internet_connection)
         return 0
     elif command[0] == "hostname":
         return "hostname"
@@ -37,11 +37,9 @@ def parse(command:list[str], current_user:str, abspath:str, repos:list[str], int
         from . import helpsystem
         helpsystem.main(command)
         return 0
-    elif command[0] == "wait":
-        try:
-            time.sleep()
-        except (KeyboardInterrupt, EOFError):
-            return 0
+    elif command[0] == "pkghelp":
+        from . import pkghelp
+        pkghelp.main(command)
     elif os.path.exists(os.path.join(abspath, "Users",  current_user, "Packages", command[0] + ".mos")):
         apprun.main(command[0], command, current_user, abspath)
         return 0

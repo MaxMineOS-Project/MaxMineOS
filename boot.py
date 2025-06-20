@@ -8,7 +8,6 @@ import subprocess
 import importlib
 import os
 import sys
-import readline
 
 
 def check_kernel_updates(kernel_version:int):
@@ -16,9 +15,8 @@ def check_kernel_updates(kernel_version:int):
         print("Can't check kernel updates!")
         log.error("Can't check kernel updates, no internet connection")
         return
-    global repos
     import requests
-    r = requests.get(repos[0] + "MANIFEST.MF")
+    r = requests.get("https://max-mine.ru/pkg/" + "MANIFEST.MF")
     server_kernel_version = float(r.content)
     kernel_path = abspath + "System\\kernel.py"
     with open(kernel_path, "rb+") as file:
@@ -36,7 +34,7 @@ def check_kernel_updates(kernel_version:int):
         print("Updating kernel...")
         log.info("Updating kernel...")
         with open(kernel_path, "rb+") as file:
-            r = requests.get(repos[1] + "kernel.py")
+            r = requests.get("https://max-mine.ru/files/" + "kernel.py")
             file.write(r.content)
             file.close()
         print(f"Kernel updated to version {server_kernel_version}")
@@ -74,13 +72,6 @@ def check_internet_connection():
         internet_connection = False
     else:
         internet_connection = True
-
-def load_repos():
-    global repos
-    with open(abspath + r"boot\repos", "rt", encoding="utf-8") as file:
-        repos = file.readlines()
-        repos[0] = repos[0].replace("\n", "")
-        file.close()
 
 def load_abspath():
     global abspath
@@ -131,7 +122,6 @@ if __name__ == "__main__":
     check_strong_depencies()
     check_internet_connection()
     load_hostname()
-    load_repos()
     load_users()
     load_passwords()
     two_list_to_cort()
@@ -139,7 +129,7 @@ if __name__ == "__main__":
     kernel = importlib.import_module("kernel")
     check_kernel_updates(kernel.KERNEL_VERSION_SHORT)
     try:
-        exitcode:int = kernel.main(internet_connection, repos, abspath, users, VER, hostname)
+        exitcode:int = kernel.main(internet_connection, abspath, users, VER, hostname)
     except KeyboardInterrupt:
         print("Exiting...")
         log.critical("User Hit ^C")
