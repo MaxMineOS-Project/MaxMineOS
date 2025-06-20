@@ -11,9 +11,9 @@ import os
 import requests
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.2.4-mm7-16.06.25"
-KERNEL_VERSION_SHORT = 1.24
-TARGET_SYSTEM_VERSION = 7
+KERNEL_VERSION = "maxmine-1.2.5-mm9-20.06.25"
+KERNEL_VERSION_SHORT = 1.25
+TARGET_SYSTEM_VERSION = 9
 async def start_timer():
     global start_time
     start_time = pendulum.now()
@@ -47,7 +47,7 @@ def auth(users:dict):
             log.error("User entered wrong username")
             continue
 
-def main(ic:bool, repos:list[str], abspath:str, users:dict, ver:str, hostname:str):
+def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
     global log, current_user, internet_connection, prompt, exit_code, pending_command, returncode
     internet_connection = ic
     log_file = os.path.join(abspath, "System", "logs", "system.log")
@@ -57,7 +57,7 @@ def main(ic:bool, repos:list[str], abspath:str, users:dict, ver:str, hostname:st
     auth(users)
     print("Введите help для получения помощи")
     while True:
-        prompt = input(f"{current_user}@{hostname}:# ")
+        prompt = input(f"{current_user}@{hostname}:#")
         log.info(f"User performed command {prompt}")
         if prompt == "":
             continue
@@ -65,7 +65,7 @@ def main(ic:bool, repos:list[str], abspath:str, users:dict, ver:str, hostname:st
         if lexered_prompt == 1:
             log.error("Error while lexing command!")
             continue
-        exit_code = parser.parse(lexered_prompt, current_user, abspath, repos, internet_connection, log)
+        exit_code = parser.parse(lexered_prompt, current_user, abspath, internet_connection, log)
         log.info(f"Exit code: {exit_code}")
         if exit_code == "exit":
             log.info("EXIT")
