@@ -8,7 +8,6 @@ import subprocess
 import importlib
 import os
 import sys
-import py_compile
 
 
 def check_kernel_updates(kernel_version:int):
@@ -19,22 +18,13 @@ def check_kernel_updates(kernel_version:int):
     import requests
     r = requests.get("https://max-mine.ru/pkg/" + "MANIFEST.MF")
     server_kernel_version = float(r.content)
-    kernel_path = abspath + "\\System\\kernel.pyc"
+    kernel_path = abspath + "System\\kernel.py"
     with open(kernel_path, "rb+") as file:
         previos_kernel = file.read()
         file.truncate(0)
         file.seek(0)
-        
         r = requests.get("https://max-mine.ru/files/" + "kernel.py")
         file.write(r.content)
-        compiled_kernel:str = py_compile.compile(kernel_path, "kernel.pyc")
-        with open(compiled_kernel, "rb") as file2:
-            content = file2.read()
-            file.truncate(0)
-            file.seek(0)
-            file.write(content)
-            file2.close()
-            os.remove(compiled_kernel)
         target_version = importlib.import_module("kernel").TARGET_SYSTEM_VERSION
         file.close()
     if kernel_version < server_kernel_version:
@@ -68,7 +58,7 @@ def check_strong_depencies():
 
 def load_hostname():
     global hostname
-    with open(abspath + r"\\boot\hostname", "rt", encoding="utf-8") as file:
+    with open(abspath + r"boot\hostname", "rt", encoding="utf-8") as file:
         hostname = file.read()
         file.close()
 
@@ -92,16 +82,16 @@ def check_internet_connection():
 
 def load_abspath():
     global abspath
-    abspath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    abspath = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "\\"
 
 def load_users():
     global usernames
-    with open(abspath + r"\\boot\users", "rt", encoding="utf-8") as file:
+    with open(abspath + r"boot\users", "rt", encoding="utf-8") as file:
         usernames = [line.strip() for line in file]
 
 def load_passwords():
     global passwords
-    with open(abspath + r"\\boot\passwords", "r") as file:
+    with open(abspath + r"boot\passwords", "r") as file:
         passwords = [line.strip().replace("\n", "").encode() for line in file.readlines()]
 
 def two_list_to_cort():
@@ -112,12 +102,12 @@ def two_list_to_cort():
 
 def load_ver():
     global VER
-    with open(abspath + r"\\boot\ver") as file:
+    with open(abspath + r"boot\ver") as file:
         VER = file.readline()
 
 def reboot():
     try:
-        subprocess.run("python " + abspath + r"\\boot\boot.py")
+        subprocess.run("python " + abspath + r"boot\boot.py")
     except KeyboardInterrupt:
         exit(-1)
     except EOFError:
