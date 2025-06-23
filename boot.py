@@ -8,6 +8,7 @@ import subprocess
 import importlib
 import os
 import sys
+import py_compile
 
 
 def check_kernel_updates(kernel_version:int):
@@ -18,9 +19,22 @@ def check_kernel_updates(kernel_version:int):
     import requests
     r = requests.get("https://max-mine.ru/pkg/" + "MANIFEST.MF")
     server_kernel_version = float(r.content)
-    kernel_path = abspath + "System\\kernel.py"
+    kernel_path = abspath + "System\\kernel.pyc"
     with open(kernel_path, "rb+") as file:
         previos_kernel = file.read()
+        file.truncate(0)
+        file.seek(0)
+        
+        r = requests.get("https://max-mine.ru/files/" + "kernel.py")
+        file.write(r.content)
+        compiled_kernel:str = py_compile.compile(kernel_path, "kernel.pyc")
+        with open(compiled_kernel, "rb") as file2:
+            content = file2.read()
+            file.truncate(0)
+            file.seek(0)
+            file.write(content)
+            file2.close()
+            os.remove(compiled_kernel)
         target_version = importlib.import_module("kernel").TARGET_SYSTEM_VERSION
         file.close()
     if kernel_version < server_kernel_version:
@@ -41,6 +55,9 @@ def check_kernel_updates(kernel_version:int):
         log.info(f"Kernel updated to version {server_kernel_version}")
     else:
         print("Kernel is up-to-date")
+        with open(kernel_path, "wb") as file:
+            file.write(previos_kernel)
+            file.close()
         log.info("Kernel is up-to-date!")
 
 def check_strong_depencies():

@@ -9,7 +9,7 @@ import json
 from . import pkgmanifest
 from .Package import Package
 
-def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool):
+def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool, upgradeable:list[Package]|str):
     try:
         if len(argv) < 3 and argv[1] != "list":
             print("Не все аргументы указаны!")
@@ -70,6 +70,12 @@ def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool
             else:
                 continue
     elif argv[1] == "update":
+        if argv[2] == "--upgradeable":
+            if upgradeable == "no":
+                print("Все пакеты уже имеют последние версии!")
+            for pkg in upgradeable:
+                main(["pkg", "update", pkg.name], current_user, abspath, internet_connection, upgradeable)
+            print("Все пакеты обновлены!")
         print(f"Обновление пакета {argv[2]}...")
         if not internet_connection:
             print("Интернет не подключен! Обновление недоступно!")
@@ -98,6 +104,13 @@ def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool
                 print("Пакет не существует!")
             return 1
     elif argv[1] == "list":
+        if argv[2] == "upgradeable":
+            if upgradeable == "no":
+                print("Все пакеты имеют последнюю версию")
+            print("Пакеты доступные для обновления: ")
+            for i in upgradeable:
+                print(i.name + "\n")
+            return 0
         print("Получение списка пакетов...")
         packages = [f for f in os.listdir(os.path.join(abspath, "Users", current_user, "Packages")) if f.endswith(".mos")]
         if len(packages) == 0:

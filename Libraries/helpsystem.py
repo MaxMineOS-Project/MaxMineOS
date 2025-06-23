@@ -16,6 +16,7 @@ def main(argv:list[str]):
         print("ver")
         print("uptime")
         print('help')
+        print("history")
         print("Установленные пакеты запускаются по их имени")
         print("Справку по определенной команде можно увидеть командой: help <команда>")
         print("Для получения помощи по определенному пакету запустите: pkghelp <пакет>")
@@ -61,6 +62,9 @@ def main(argv:list[str]):
             print("pkghelp - справочная система по пакетам.")
             print("Синтаксис: pkghelp <пакет>")
             return 0
+        elif argv[1] == "history":
+            print("history - просмотр истории команд")
+            return 1
         else:
             print(f"Команда {argv[1]} не найдена в справочной системе")
             return 1

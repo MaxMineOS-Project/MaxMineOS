@@ -7,7 +7,7 @@ import os
 from . import apprun
 import time
 
-def parse(command:list[str], current_user:str, abspath:str, internet_connection:bool, log):
+def parse(command:list[str], current_user:str, abspath:str, internet_connection:bool, log, upgradeable):
     if command[0] == "shutdown" or command[0] == "exit":
         return "exit"
     elif command[0] == "reboot" or command[0] == "restart":
@@ -27,10 +27,8 @@ def parse(command:list[str], current_user:str, abspath:str, internet_connection:
         updater.update_system(abspath, log)
     elif command[0] == "pkg":
         from . import pkg
-        pkg.main(command, current_user, abspath, internet_connection)
+        pkg.main(command, current_user, abspath, internet_connection, upgradeable)
         return 0
-    elif command[0] == "hostname":
-        return "hostname"
     elif command[0] == "syslog":
         return "syslog"
     elif command[0] == "help":
@@ -40,6 +38,9 @@ def parse(command:list[str], current_user:str, abspath:str, internet_connection:
     elif command[0] == "pkghelp":
         from . import pkghelp
         pkghelp.main(command)
+        return 0
+    elif command[0] == "history":
+        return "history"
     elif os.path.exists(os.path.join(abspath, "Users",  current_user, "Packages", command[0] + ".mos")):
         apprun.main(command[0], command, current_user, abspath)
         return 0
