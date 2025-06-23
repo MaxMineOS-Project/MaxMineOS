@@ -13,8 +13,8 @@ import requests
 import json
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.3-mm10-23.06.25"
-KERNEL_VERSION_SHORT = 1.3
+KERNEL_VERSION = "maxmine-1.3.1-mm10-23.06.25"
+KERNEL_VERSION_SHORT = 1.31
 TARGET_SYSTEM_VERSION = 10
 async def start_timer():
     global start_time
@@ -34,7 +34,7 @@ def check_updates(abspath):
     server_manifest_json:dict[str, dict[str, str | float]] = json.loads(server_manifest)
     upgradeable:list[Package] = []
     for package in manifest:
-        if package.version < server_manifest_json[package.name]["version"]:
+        if float(package.version) < float(server_manifest_json[package.name]["version"]):
             upgradeable.append(package)
     if len(upgradeable) == 0:
         return "no"
@@ -71,6 +71,7 @@ def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
     log.info("System booted.")
     auth(users)
     print("Введите help для получения помощи")
+    log.info(f"Type abspath: {type(abspath)}")
     upgradeable_packages = check_updates(abspath)
     if upgradeable_packages == "no":
         print("Все пакеты имеют последние версии")
@@ -78,9 +79,10 @@ def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
         print(f"Для обновления доступно {len(upgradeable_packages)} пакетов. Введите pkg list upgradeable для их просмотра и pkg update --upgradeable для их обновления")
     while True:
         prompt = input(f"{current_user}@{hostname}:#")
-        with open(os.path.join(abspath, "System", "history"), "at", encoding="utf-8") as file:
-            file.write(prompt + "\n")
-            file.close()
+        if not prompt == "":
+            with open(os.path.join(abspath, "System", "history"), "at", encoding="utf-8") as file:
+                file.write(prompt + "\n")
+                file.close()
         log.info(f"User performed command {prompt}")
         if prompt == "":
             continue
