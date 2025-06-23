@@ -92,7 +92,7 @@ def check_internet_connection():
 
 def load_abspath():
     global abspath
-    abspath = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "\\"
+    abspath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def load_users():
     global usernames
