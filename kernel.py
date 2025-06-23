@@ -3,29 +3,44 @@
 
 # Main OS executable file - OS Kernel
 
-from Libraries import authlib, lexer, parser, logger
+from Libraries import authlib, lexer, parser, logger, pkgmanifest
+from Libraries.Package import Package
 import getpass
 import pendulum
 import asyncio
 import os
 import requests
+import json
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.2.5-mm9-20.06.25"
-KERNEL_VERSION_SHORT = 1.25
-TARGET_SYSTEM_VERSION = 9
+KERNEL_VERSION = "maxmine-1.3-mm10-23.06.25"
+KERNEL_VERSION_SHORT = 1.3
+TARGET_SYSTEM_VERSION = 10
 async def start_timer():
     global start_time
     start_time = pendulum.now()
 
-def get_elapsed():
-    return start_time.diff_for_humans(pendulum.now(), absolute=True)
 
 
 async def timer():
     await start_timer()
 asyncio.run(timer())
 current_user:str
+
+def check_updates(abspath):
+    global current_user
+    manifest:list[Package] = pkgmanifest.get_manifest(abspath, current_user)
+    server_manifest = requests.get("https://max-mine.ru/pkg/MANIFEST.json/").content
+    server_manifest_json:dict[str, dict[str, str | float]] = json.loads(server_manifest)
+    upgradeable:list[Package] = []
+    for package in manifest:
+        if package.version < server_manifest_json[package.name]["version"]:
+            upgradeable.append(package)
+    if len(upgradeable) == 0:
+        return "no"
+    else:
+        return upgradeable
+
 def auth(users:dict):
     global current_user
     while True:
@@ -48,7 +63,7 @@ def auth(users:dict):
             continue
 
 def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
-    global log, current_user, internet_connection, prompt, exit_code, pending_command, returncode
+    global log, current_user, internet_connection, prompt, exit_code
     internet_connection = ic
     log_file = os.path.join(abspath, "System", "logs", "system.log")
     logger.setup_logger(log_file)
@@ -56,8 +71,16 @@ def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
     log.info("System booted.")
     auth(users)
     print("Введите help для получения помощи")
+    upgradeable_packages = check_updates(abspath)
+    if upgradeable_packages == "no":
+        print("Все пакеты имеют последние версии")
+    else:
+        print(f"Для обновления доступно {len(upgradeable_packages)} пакетов. Введите pkg list upgradeable для их просмотра и pkg update --upgradeable для их обновления")
     while True:
         prompt = input(f"{current_user}@{hostname}:#")
+        with open(os.path.join(abspath, "System", "history"), "at", encoding="utf-8") as file:
+            file.write(prompt + "\n")
+            file.close()
         log.info(f"User performed command {prompt}")
         if prompt == "":
             continue
@@ -65,7 +88,7 @@ def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
         if lexered_prompt == 1:
             log.error("Error while lexing command!")
             continue
-        exit_code = parser.parse(lexered_prompt, current_user, abspath, internet_connection, log)
+        exit_code = parser.parse(lexered_prompt, current_user, abspath, internet_connection, log, upgradeable_packages)
         log.info(f"Exit code: {exit_code}")
         if exit_code == "exit":
             log.info("EXIT")
@@ -98,10 +121,14 @@ def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
         elif exit_code == "ver":
             print("Версия системы: " + ver)
         elif exit_code == "uptime":
-            print(get_elapsed())
-        elif exit_code == "syslog":
+            print(start_time.diff_for_humans(pendulum.now(), absolute=True))
+        elif exit_code == "syslog": # Undocumented
             with open(log_file, "r", encoding="utf-8") as file:
                 print(file.read())
+                file.close()
+        elif exit_code == "history":
+            with open(os.path.join(abspath, "System", "history"), "rt", encoding='utf-8') as file:
+                print(file.read().strip())
                 file.close()
         elif exit_code == "invalid":
             log.error("User entered unknown command!")
