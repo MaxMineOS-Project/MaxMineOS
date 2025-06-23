@@ -1,4 +1,17 @@
-# This is a changelog in English. Starts with version 6
+# This is a changelog in English. Starts in version 3
+
+# MaxMineOS 3
+* First public version!
+
+# MaxMineOS 4
+* Added logging
+* Added `sysupdate` command
+* Added kernel updates mechanism
+* Added ^C and ^Z handling
+
+# MaxMineOS 5
+* Added new package type
+
 
 # MaxMineOS 6
 
@@ -29,11 +42,15 @@
 * Hostnamectl internet checking
 
 
-# MaxMineOS 8 and MaxMineOS 9 are skipped as it was just bugfixes
+# MaxMineOS 8
+* Misc bugfixes and optimizations
+
+# MaxMineOS 9
+* Pkghelp now in base system
+* Added package manifest
+* Deleted repos loading
 
 # MaxMineOS 10
-
-* Added base pkghelp
 * Added `history` command
 * Added package manifest
 * Added package updates check
