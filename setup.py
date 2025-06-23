@@ -51,7 +51,6 @@ def install():
     print("Сохранение архива...")
     with open(zip_path, "wb") as file:
         file.write(r.content)
-
     print("Распаковка архива...")
     with zipfile.ZipFile(zip_path, 'r') as archive:
         archive.extractall(install_dir)
@@ -61,48 +60,8 @@ def install():
         hostname = "PC-" + "".join(random.choices(string.ascii_letters + string.digits, k=5))
     users = []
     passwords = []
-    rejected_symbols = (
-        "~",
-        "`",
-        "!",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "0",
-        "@",
-        "\"",
-        "\\",
-        "-",
-        "_",
-        "=",
-        "+",
-        ";",
-        "%",
-        "^",
-        ":",
-        "&",
-        "?",
-        ",",
-        ".",
-        "/",
-        ">",
-        "<",
-        "\t",
-        "'",
-        "[",
-        "]",
-        "{",
-        "}",
-        "(",
-        ")",
-        "*"
-    )
+    rejected_symbols = set(string.punctuation) - {"$"}
+    rejected_symbols.update(string.whitespace)
     while True:
         user = input("Введите имя пользователя. Чтобы закончить, введите $end: ")
         if any(char in rejected_symbols for char in user):
@@ -138,9 +97,6 @@ def install():
     boot_path = os.path.join(install_dir, "boot")
     os.makedirs(boot_path, exist_ok=True)
 
-    with open(os.path.join(boot_path, "repos"), "w") as file:
-        file.write("https://max-mine.ru/pkg/\nhttps://max-mine.ru/files/")
-
     with open(os.path.join(boot_path, "hostname"), "w") as file:
         file.write(hostname)
 
@@ -159,14 +115,13 @@ def install():
     os.makedirs(os.path.join(install_dir, "System", "temp"), mode=0o777, exist_ok=True)
 
     print("Система установлена успешно! Пользуйтесь!")
-    os.remove(os.path.join(install_dir, "setup.exe"))
     os.remove(os.path.join(install_dir, "README.txt"))
     sys.exit(0)
 
 
 # Главный цикл
 while True:
-    prompt = input("Installer:# ").strip()
+    prompt = input("Installer:#").strip()
     if prompt == "help":
         print("install - установка системы")
         print("exit - выход из установщика")
