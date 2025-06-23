@@ -19,7 +19,7 @@ def check_kernel_updates(kernel_version:int):
     import requests
     r = requests.get("https://max-mine.ru/pkg/" + "MANIFEST.MF")
     server_kernel_version = float(r.content)
-    kernel_path = abspath + "System\\kernel.pyc"
+    kernel_path = abspath + "\\System\\kernel.pyc"
     with open(kernel_path, "rb+") as file:
         previos_kernel = file.read()
         file.truncate(0)
@@ -68,7 +68,7 @@ def check_strong_depencies():
 
 def load_hostname():
     global hostname
-    with open(abspath + r"boot\hostname", "rt", encoding="utf-8") as file:
+    with open(abspath + r"\\boot\hostname", "rt", encoding="utf-8") as file:
         hostname = file.read()
         file.close()
 
