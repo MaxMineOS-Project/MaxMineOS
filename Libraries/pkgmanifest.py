@@ -9,7 +9,7 @@ from .Package import Package
 
 def get_manifest(abspath:str, current_user:str) -> list[Package]:
     if not os.path.exists(os.path.join(abspath, "Users", current_user, "MANIFEST.json")):
-        with open(os.path.exists(os.path.join(abspath, "Users", current_user, "MANIFEST.json")), "w", encoding="utf-8") as file:
+        with open(os.path.join(abspath, "Users", current_user, "MANIFEST.json"), "w", encoding="utf-8") as file:
             json.dump({}, file)
             file.close()
     with open(os.path.join(abspath, "Users", current_user, "MANIFEST.json"), "r", encoding="utf-8") as file:
