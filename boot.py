@@ -96,12 +96,12 @@ def load_abspath():
 
 def load_users():
     global usernames
-    with open(abspath + r"boot\users", "rt", encoding="utf-8") as file:
+    with open(abspath + r"\\boot\users", "rt", encoding="utf-8") as file:
         usernames = [line.strip() for line in file]
 
 def load_passwords():
     global passwords
-    with open(abspath + r"boot\passwords", "r") as file:
+    with open(abspath + r"\\boot\passwords", "r") as file:
         passwords = [line.strip().replace("\n", "").encode() for line in file.readlines()]
 
 def two_list_to_cort():
@@ -112,12 +112,12 @@ def two_list_to_cort():
 
 def load_ver():
     global VER
-    with open(abspath + r"boot\ver") as file:
+    with open(abspath + r"\\boot\ver") as file:
         VER = file.readline()
 
 def reboot():
     try:
-        subprocess.run("python " + abspath + r"boot\boot.py")
+        subprocess.run("python " + abspath + r"\\boot\boot.py")
     except KeyboardInterrupt:
         exit(-1)
     except EOFError:
