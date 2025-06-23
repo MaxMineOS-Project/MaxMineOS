@@ -27,3 +27,15 @@
 * Adding `pkg update` command
 * Added logging encoding - UTF-8
 * Hostnamectl internet checking
+
+
+# MaxMineOS 8 and MaxMineOS 9 are skipped as it was just bugfixes
+
+# MaxMineOS 10
+
+* Added base pkghelp
+* Added `history` command
+* Added package manifest
+* Added package updates check
+* Added `pkg list upgradeable` command
+* Added `pkg update --upgradeable` command
