@@ -13,9 +13,9 @@ import requests
 import json
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.3.1-mm10-23.06.25"
-KERNEL_VERSION_SHORT = 1.31
-TARGET_SYSTEM_VERSION = 10
+KERNEL_VERSION = "maxmine-1.3.2-mm11-26.06.25"
+KERNEL_VERSION_SHORT = 1.32
+TARGET_SYSTEM_VERSION = 11
 async def start_timer():
     global start_time
     start_time = pendulum.now()
@@ -117,7 +117,7 @@ def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
             print(f"Имя системы: {hostname}")
             print(f"Путь установки системы: {abspath}")
             print(f"Текущий пользователь: {current_user}")
-            print(f"Подключение к интернету: {"Да" if internet_connection else "Нет"}")
+            print(f"Подключение к интернету: {'Да' if internet_connection else 'Нет'}")
         elif exit_code == "whoami":
             print(current_user)
         elif exit_code == "ver":
@@ -131,6 +131,9 @@ def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
         elif exit_code == "history":
             with open(os.path.join(abspath, "System", "history"), "rt", encoding='utf-8') as file:
                 print(file.read().strip())
+                file.close()
+        elif exit_code == "historyclean":
+            with open(os.path.join(abspath, "System", "history"), "w", encoding="utf-8") as file:
                 file.close()
         elif exit_code == "invalid":
             log.error("User entered unknown command!")
