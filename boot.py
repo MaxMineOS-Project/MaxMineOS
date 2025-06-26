@@ -18,7 +18,7 @@ def check_kernel_updates(kernel_version:int):
     import requests
     r = requests.get("https://max-mine.ru/pkg/" + "MANIFEST.MF")
     server_kernel_version = float(r.content)
-    kernel_path = abspath + "System\\kernel.py"
+    kernel_path = os.path.join(abspath, "System", "kernel.py")
     with open(kernel_path, "rb+") as file:
         previos_kernel = file.read()
         file.truncate(0)
@@ -58,7 +58,7 @@ def check_strong_depencies():
 
 def load_hostname():
     global hostname
-    with open(abspath + r"boot\hostname", "rt", encoding="utf-8") as file:
+    with open(os.path.join(abspath, "boot", "hostname"), "rt", encoding="utf-8") as file:
         hostname = file.read()
         file.close()
 
@@ -82,16 +82,16 @@ def check_internet_connection():
 
 def load_abspath():
     global abspath
-    abspath = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "\\"
+    abspath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def load_users():
     global usernames
-    with open(abspath + r"boot\users", "rt", encoding="utf-8") as file:
+    with open(os.path.join(abspath, "boot", "users"), "rt", encoding="utf-8") as file:
         usernames = [line.strip() for line in file]
 
 def load_passwords():
     global passwords
-    with open(abspath + r"boot\passwords", "r") as file:
+    with open(os.path.join(abspath, "boot", "passwords"), "r") as file:
         passwords = [line.strip().replace("\n", "").encode() for line in file.readlines()]
 
 def two_list_to_cort():
@@ -102,12 +102,12 @@ def two_list_to_cort():
 
 def load_ver():
     global VER
-    with open(abspath + r"boot\ver") as file:
+    with open(os.path.join(abspath, "boot", "ver"), "r", encoding="utf-8") as file:
         VER = file.readline()
 
 def reboot():
     try:
-        subprocess.run("python " + abspath + r"boot\boot.py")
+        subprocess.run("python " + os.path.join(abspath, "boot", "boot.py"))
     except KeyboardInterrupt:
         exit(-1)
     except EOFError:

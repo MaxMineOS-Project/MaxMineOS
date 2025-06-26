@@ -4,7 +4,7 @@
 # Package Class
 
 class Package:
-    def __init__(self, name:str, version:str, helptext:str=""):
+    def __init__(self, name:str, version:float, helptext:str=""):
         self.name = name
         self.version = version
         self.helptext = helptext

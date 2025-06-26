@@ -64,6 +64,7 @@ def main(argv:list[str]):
             return 0
         elif argv[1] == "history":
             print("history - просмотр истории команд")
+            print("history clear - очистка истории команд")
             return 1
         else:
             print(f"Команда {argv[1]} не найдена в справочной системе")

@@ -27,7 +27,7 @@ def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool
             return 1
         print(f"Установка пакета {argv[2]}...")
         print(f"GET https://max-mine.ru/pkg/{argv[2]}.mos")
-        r = requests.get(f"{"https://max-mine.ru/pkg/"}{argv[2]}.mos")
+        r = requests.get(f"{'https://max-mine.ru/pkg/'}{argv[2]}.mos")
         if r.status_code == 200:
             print(f"OK https://max-mine.ru/pkg/{argv[2]}.mos {round(r.elapsed.total_seconds() * 1000, 3)} мс")
             with open(package_file, "wb") as file:
@@ -82,7 +82,7 @@ def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool
             return 1
         package_file = os.path.join(abspath, "Users", current_user, "Packages", argv[2] + ".mos")
         print(f"GET https://max-mine.ru/pkg/{argv[2]}.mos")
-        r = requests.get(f"{"https://max-mine.ru/pkg/"}{argv[2]}.mos")
+        r = requests.get(f"{'https://max-mine.ru/pkg/'}{argv[2]}.mos")
         if r.status_code == 200:
             print(f"OK https://max-mine.ru/pkg/{argv[2]}.mos {round(r.elapsed.total_seconds() * 1000, 3)} мс")
             with open(package_file, "wb") as file:
