@@ -1,7 +1,7 @@
 # MaxMineOS
 MaxMineOS! Written on Python!
 # About
-This OS is written on Python and works ***only*** on Windows.
+This OS is written on Python and works on Windows, and there is an experimental version for Linux.
 # Install HOWTO
 This time, you can install system by running `setup.exe`
 
