@@ -91,7 +91,7 @@ def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool
             server_manifest = requests.get("https://max-mine.ru/pkg/MANIFEST.json").content
             server_manifest_json:dict[str, dict[str, str | float]] = json.loads(server_manifest)
             manifest = pkgmanifest.get_manifest(abspath, current_user)
-            manifest = pkgmanifest.del_from_manifest(manifest[2], server_manifest_json[argv[2]]["help"], manifest, False)
+            manifest = pkgmanifest.del_from_manifest(Package(argv[2], server_manifest_json[argv[2]]["version"], server_manifest_json[argv[2]]["help"]), manifest)
             manifest = pkgmanifest.add_to_manifest(Package(argv[2], server_manifest_json[argv[2]]["version"], server_manifest_json[argv[2]]["help"]), manifest)
             pkgmanifest.save_manifest(manifest, abspath, current_user)
             print("Пакет успешно обновлен!")
@@ -107,6 +107,7 @@ def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool
         if argv[2] == "upgradeable":
             if upgradeable == "no":
                 print("Все пакеты имеют последнюю версию")
+                return 0
             print("Пакеты доступные для обновления: ")
             for i in upgradeable:
                 print(i.name + "\n")

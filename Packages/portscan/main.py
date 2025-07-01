@@ -1,57 +1,83 @@
 import socket
 import threading
+from concurrent.futures import ThreadPoolExecutor
+from queue import Queue
+
+MAX_THREADS = 500
+TIMEOUT_TCP = 0.3
+TIMEOUT_UDP = 0.5
 
 open_tcp = []
 open_udp = []
 
-def scan_tcp(ip, port):
+lock = threading.Lock()
+
+def scan_tcp(ip: str, port: int):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(0.3)
+            s.settimeout(TIMEOUT_TCP)
             if s.connect_ex((ip, port)) == 0:
-                open_tcp.append(port)
+                with lock:
+                    open_tcp.append(port)
     except:
         pass
 
-def scan_udp(ip, port):
+def scan_udp(ip: str, port: int):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.settimeout(0.5)
+            s.settimeout(TIMEOUT_UDP)
             s.sendto(b'', (ip, port))
-            s.recvfrom(1024)  # Попытка получить ответ
-            open_udp.append(port)
+            s.recvfrom(1024)
+            with lock:
+                open_udp.append(port)
     except socket.timeout:
-        open_udp.append(port)  # Нет ответа — UDP может быть открыт
+        # UDP порты могут молчать даже если открыты
+        with lock:
+            open_udp.append(port)
     except:
         pass
 
-def main(argv:list[str]):
+def main(argv: list[str]):
+    if len(argv) < 2:
+        print("Использование: portscan <хост или IP>")
+        return 1
+    prompt = input("Сканировать UPD порты?")
+    if prompt.lower() in ["y", "д"]:
+        scanning_udp = True
+    else:
+        scanning_udp = False
     target = argv[1].strip()
-
     try:
         ip = socket.gethostbyname(target)
     except:
         print("Ошибка: не удалось разрешить хост.")
         return 1
 
-    print(f"Сканирую {ip} на открытые порты TCP/UDP...")
+    print(f"Сканирую {ip} на открытые порты TCP...")
 
-    threads = []
-    for port in range(1, 65536):
-        t = threading.Thread(target=scan_tcp, args=(ip, port))
-        threads.append(t); t.start()
-    for t in threads: t.join()
+    with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
+        for port in range(1, 65535):  # можно увеличить до 65535
+            executor.submit(scan_tcp, ip, port)
+    if scanning_udp:
+        print(f"Сканирую {ip} на открытые или откликающиеся порты UDP...")
 
-    threads = []
-    for port in range(1, 65536):
-        t = threading.Thread(target=scan_udp, args=(ip, port))
-        threads.append(t); t.start()
-    for t in threads: t.join()
+        with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
+            for port in range(1, 1025):  # UDP >1024 часто бесполезны
+                executor.submit(scan_udp, ip, port)
+        print("\nUDP-порты (возможно открыты или не ответили):")
+        if open_udp:
+            for p in sorted(open_udp):
+                print(f"  {p}")
+        else:
+            print("Нет UDP портов, которые ответили или проигнорировали.")
 
-    print("\n📡 Открытые TCP-порты:")
-    for p in sorted(open_tcp): print(f"  {p}")
+    # Вывод
+    print("\nОткрытые TCP-порты:")
+    if open_tcp:
+        for p in sorted(open_tcp):
+            print(f"  {p}")
+    else:
+        print("Нет открытых TCP портов.")
 
-    print("\n📡 Открытые или неотвечающие UDP-порты:")
-    for p in sorted(open_udp): print(f"  {p}")
 
     return 0

@@ -40,6 +40,8 @@ def parse(command:list[str], current_user:str, abspath:str, internet_connection:
         pkghelp.main(command)
         return 0
     elif command[0] == "history":
+        if len(command) < 2:
+            return "history"
         if command[1] == "clean":
             return "historyclean"
         else:

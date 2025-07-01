@@ -107,7 +107,7 @@ def load_ver():
 
 def reboot():
     try:
-        subprocess.run("python " + os.path.join(abspath, "boot", "boot.py"))
+        subprocess.run("python " + os.path.join(abspath, "boot", "boot.py"), shell=True)
     except KeyboardInterrupt:
         exit(-1)
     except EOFError:
