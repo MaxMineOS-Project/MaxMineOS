@@ -56,3 +56,7 @@
 * Added package updates check
 * Added `pkg list upgradeable` command
 * Added `pkg update --upgradeable` command
+
+# MaxMineOS 11 and 12
+* Bugfixes
+* Optimizations
