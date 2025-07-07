@@ -60,7 +60,7 @@ def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool
                 server_manifest = requests.get("https://max-mine.ru/pkg/MANIFEST.json").content
                 server_manifest_json:dict[str, dict[str, str | float]] = json.loads(server_manifest)
                 manifest = pkgmanifest.get_manifest(abspath, current_user)
-                manifest = pkgmanifest.del_from_manifest(manifest[2], server_manifest_json[argv[2]]["help"], manifest)
+                manifest = pkgmanifest.del_from_manifest(Package(argv[2], server_manifest_json[argv[2]]["version"], server_manifest_json[argv[2]]["help"]), manifest)
                 pkgmanifest.save_manifest(manifest, abspath, current_user)
                 print("Пакет успешно удалён!")
                 return 0
@@ -104,22 +104,23 @@ def main(argv:list[str], current_user:str, abspath:str, internet_connection:bool
                 print("Пакет не существует!")
             return 1
     elif argv[1] == "list":
-        if argv[2] == "upgradeable":
-            if upgradeable == "no":
-                print("Все пакеты имеют последнюю версию")
+        if not len(argv) < 3:
+            if argv[2] == "upgradeable":
+                if upgradeable == "no":
+                    print("Все пакеты имеют последнюю версию")
+                    return 0
+                print("Пакеты доступные для обновления: ")
+                for i in upgradeable:
+                    print(i.name + "\n")
                 return 0
-            print("Пакеты доступные для обновления: ")
-            for i in upgradeable:
-                print(i.name + "\n")
-            return 0
         print("Получение списка пакетов...")
         packages = [f for f in os.listdir(os.path.join(abspath, "Users", current_user, "Packages")) if f.endswith(".mos")]
         if len(packages) == 0:
             print("У вас не установлено ни одного пакета!")
             return 0
-        print("Список пакетов: ")
+        print("Список пакетов: " + "\n")
         for name in packages:
-            print(name.removesuffix(".mos") + "\n")
+            print(name.removesuffix(".mos"))
         return 0
     else:
         print("Команда не найдена! Повторите попытку!")

@@ -17,6 +17,7 @@ def main(argv:list[str]):
         print("uptime")
         print('help')
         print("history")
+        print("exitcode")
         print("Установленные пакеты запускаются по их имени")
         print("Справку по определенной команде можно увидеть командой: help <команда>")
         print("Для получения помощи по определенному пакету запустите: pkghelp <пакет>")
@@ -66,6 +67,8 @@ def main(argv:list[str]):
             print("history - просмотр истории команд")
             print("history clear - очистка истории команд")
             return 1
+        elif argv[1] == "exitcode":
+            print("exitcode - последний код выхода команды")
         else:
             print(f"Команда {argv[1]} не найдена в справочной системе")
             return 1

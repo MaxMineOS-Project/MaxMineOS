@@ -18,7 +18,7 @@ def get_manifest(abspath:str, current_user:str) -> list[Package]:
     packages:list[Package] = []
 
     for name, pkg in manifest.items():
-        packages.append(Package(name, str(pkg["version"]), pkg.get("help", "")))
+        packages.append(Package(name, pkg["version"], pkg.get("help", "")))
 
     return packages
 
@@ -28,7 +28,16 @@ def add_to_manifest(pkg:Package, manifest:list[Package]) -> list[Package]:
 
 
 def del_from_manifest(pkg:Package, manifest:list[Package]) -> list[Package]:
-    manifest.remove(pkg)
+    if pkg in manifest:
+        manifest.remove(pkg)
+    else:
+        # Finding package by name
+        for pka in manifest:
+            if pka.name == pkg.name:
+                if pka in manifest:
+                    manifest.remove(pka)
+                else:
+                    pass # Package not in manifest
     return manifest
 
 def save_manifest(manifest:list[Package], abspath:str, current_user:str):

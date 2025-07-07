@@ -4,10 +4,8 @@
 # Command Parser
 
 import os
-from . import apprun
-import time
 
-def parse(command:list[str], current_user:str, abspath:str, internet_connection:bool, log, upgradeable):
+def parse(command:list[str], current_user:str, abspath:str, internet_connection:bool, log, upgradeable:str|list):
     if command[0] == "shutdown" or command[0] == "exit":
         return "exit"
     elif command[0] == "reboot" or command[0] == "restart":
@@ -24,30 +22,29 @@ def parse(command:list[str], current_user:str, abspath:str, internet_connection:
         return "whoami"
     elif command[0] == "sysupdate":
         from . import updater
-        updater.update_system(abspath, log)
+        return updater.update_system(abspath, log)
     elif command[0] == "pkg":
         from . import pkg
-        pkg.main(command, current_user, abspath, internet_connection, upgradeable)
-        return 0
+        return pkg.main(command, current_user, abspath, internet_connection, upgradeable)
     elif command[0] == "syslog":
         return "syslog"
     elif command[0] == "help":
         from . import helpsystem
-        helpsystem.main(command)
-        return 0
+        return helpsystem.main(command)
     elif command[0] == "pkghelp":
         from . import pkghelp
-        pkghelp.main(command)
-        return 0
+        return pkghelp.main(command)
     elif command[0] == "history":
         if len(command) < 2:
             return "history"
-        if command[1] == "clean":
+        elif command[1] == "clean":
             return "historyclean"
         else:
             return "history"
-    elif os.path.exists(os.path.join(abspath, "Users",  current_user, "Packages", command[0] + ".mos")):
-        apprun.main(command[0], command, current_user, abspath)
-        return 0
+    elif command[0] == "exitcode":
+        return "exitcode"
+    elif os.path.exists(os.path.join(abspath, "Users",  current_user, "Packages", command[0] + ".mos")) or os.path.exists(os.path.join(abspath, "Users", current_user, "Packages", command[0])):
+        from . import apprun
+        return apprun.main(command[0], command, current_user, abspath)
     else:
         return "invalid"
