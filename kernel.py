@@ -13,9 +13,9 @@ import requests
 import json
 
 start_time = None
-KERNEL_VERSION = "maxmine-1.3.2-mm11-26.06.25"
-KERNEL_VERSION_SHORT = 1.32
-TARGET_SYSTEM_VERSION = 11
+KERNEL_VERSION = "maxmine-1.3.3-mm13-04.07.25"
+KERNEL_VERSION_SHORT = 1.33
+TARGET_SYSTEM_VERSION = 13
 async def start_timer():
     global start_time
     start_time = pendulum.now()
@@ -40,6 +40,12 @@ def check_updates(abspath):
         return "no"
     else:
         return upgradeable
+    
+def check_system_updates():
+    r = requests.get("https://max-mine.ru/pkg/SYSVER/")
+    if r.status_code == 200:
+        server_system_version = float(r.content)
+    return server_system_version
 
 def auth(users:dict):
     global current_user
@@ -69,9 +75,16 @@ def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
     logger.setup_logger(log_file)
     log = logger.get_logger("MaxMineOS")
     log.info("System booted.")
+    log.info("Checking system updates...")
+    new_system_version = check_system_updates()
+    if float(ver) < new_system_version:
+        log.info(f"Found update! New version: {new_system_version}")
+        print("Доступна новая версия системы! Обновите систему командой sysupdate!")
+    else:
+        log.info("Update not found")
     auth(users)
     print("Введите help для получения помощи")
-    log.info(f"Type abspath: {type(abspath)}")
+    log.info("Checking package updates...")
     upgradeable_packages = check_updates(abspath)
     if upgradeable_packages == "no":
         print("Все пакеты имеют последние версии")
@@ -135,7 +148,13 @@ def main(ic:bool, abspath:str, users:dict, ver:str, hostname:str):
         elif exit_code == "historyclean":
             with open(os.path.join(abspath, "System", "history"), "w", encoding="utf-8") as file:
                 file.close()
+            print("История успешно очищена!")
         elif exit_code == "invalid":
             log.error("User entered unknown command!")
             print("Неизвестная команда! Проверьте правильность набора!")
+            special_exit_code = -1
             continue
+        elif exit_code == "exitcode":
+            print(f"Последний код выхода: {special_exit_code}")
+        else:
+            special_exit_code = exit_code
